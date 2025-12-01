@@ -1,21 +1,119 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Flask SQLite Demo</title>
+    <meta charset="utf-8">
+    <title>Item List</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background-color: #f7f9fb;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #4b79ff;
+            color: white;
+            padding: 18px 30px;
+            font-size: 26px;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 650px;
+            margin: 40px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.08);
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul li {
+            background: #eceff9;
+            border-radius: 5px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+        form {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #b8bee3;
+        }
+        button {
+            background: #4b79ff;
+            border: none;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #385fe6;
+        }
+        .footer {
+            margin-top: 25px;
+            font-size: 14px;
+            text-align: center;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-    <h1>Item List</h1>
-    <ul>
-        {% for item in items %}
-        <li>{{ item['name'] }}</li>
-        {% endfor %}
-    </ul>
-    <form action="/add" method="post">
-        <input type="text" name="name" placeholder="Enter item name">
-        <button type="submit">Add Item</button>
-    </form>
+    <header>Flask + SQLite Demo</header>
+    <div class="container">
+        <h2>Item List</h2>
+
+        <ul>
+            {% for item in items %}
+                <li>{{ item['name'] }}</li>
+            {% endfor %}
+        </ul>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul style="list-style:none; padding:0;">
+            {% for category, message in messages %}
+                {% set color = 'gray' %}
+                {% if category == 'danger' %}{% set color = 'red' %}{% endif %}
+                {% if category == 'warning' %}{% set color = 'orange' %}{% endif %}
+                {% if category == 'success' %}{% set color = 'green' %}{% endif %}
+                <li style="margin-bottom:8px;color:{{ color }};font-size:16px;">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+
+        <form action="/add" method="post" style="margin-bottom: 16px;">
+            <input type="text" name="name" placeholder="Enter item name">
+            <button type="submit">Add Item</button>
+        </form>
+
+        <!-- 新增：CSV上传表单 -->
+        <form action="/upload-csv" method="post" enctype="multipart/form-data" style="margin-bottom: 16px;">
+            <input type="file" name="file" accept=".csv">
+            <button type="submit">上传CSV</button>
+        </form>
+        <div style="font-size:13px;color:#888;margin-bottom:14px;">上传格式示例：每行一个名称，无标题行。例如：<br>Apple<br>Banana<br>Orange</div>
+
+        <div class="footer">
+            Data stored in SQLite — items will remain after restart.
+        </div>
+        <div class="footer">
+            Data stored in SQLite — items will remain after restart.
+        </div>
+    </div>
 </body>
 </html>
+
 
 

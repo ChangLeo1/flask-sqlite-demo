@@ -3,11 +3,15 @@ from .routes import bp
 
 def create_app():
     app = Flask(__name__)
+    
+    # Restore essential configuration
+    app.config['SECRET_KEY'] = 'dev-key-change-me'  # Use env var/strong key in prod
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-    # 注册蓝图
+    # Register blueprint
     app.register_blueprint(bp)
 
-    # teardown 时关闭数据库连接
+    # teardown: close db
     from .db import close_db
     app.teardown_appcontext(close_db)
 
