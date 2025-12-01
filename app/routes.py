@@ -22,6 +22,14 @@ def add():
     db.commit()
     return redirect(url_for('main.index'))
 
+@bp.route('/delete/<int:item_id>', methods=['POST'])
+def delete(item_id):
+    db = get_db()
+    db.execute('DELETE FROM item WHERE id = ?', (item_id,))
+    db.commit()
+    flash("Item deleted.", "success")
+    return redirect(url_for('main.index'))
+
 @bp.route('/api/items')
 def api_items():
     db = get_db()

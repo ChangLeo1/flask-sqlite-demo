@@ -75,9 +75,20 @@
 
         <ul>
             {% for item in items %}
-                <li>{{ item['name'] }}</li>
+                <li style="display:flex; align-items:center; justify-content:space-between;">
+                    <span>{{ item['name'] }}</span>
+                    <form action="/delete/{{ item['id'] }}" method="post" style="margin:0;">
+                        <button type="submit" style="background:transparent;color:#e74c3c;border:none;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:14px;transition:background 0.2s;">删除</button>
+                    </form>
+                </li>
             {% endfor %}
         </ul>
+        <style>
+            ul li form button:hover {
+                background: #ffe5e5;
+                color: #fff;
+            }
+        </style>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
