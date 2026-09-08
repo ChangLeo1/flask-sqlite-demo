@@ -3,6 +3,7 @@ from __future__ import annotations
 import ipaddress
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
 from typing import Optional
 
 from flask import Flask, jsonify, redirect, render_template, request, url_for
@@ -94,7 +95,7 @@ def api_status():
                     "packet_loss": None,
                     "dns_ip": None,
                     "port_open": None,
-                    "checked_at": None,
+                    "checked_at": datetime.now(timezone.utc).isoformat(),
                     "error": f"Unexpected check error: {exc}",
                 }
 
