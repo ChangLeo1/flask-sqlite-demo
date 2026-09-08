@@ -15,8 +15,30 @@ For every device or host you add, the app can show:
 - **TCP port status** — whether one configured service port accepts a connection
 - **Recent uptime** — percentage of successful checks from the latest stored measurements
 - **History** — measurements saved in SQLite for later analysis
+- **Latency over time chart** — a time-series view of response-time changes
+- **Packet loss over time chart** — a time-series view of reliability changes
 
-The dashboard automatically rechecks targets every 30 seconds while the page is open.
+The dashboard automatically rechecks targets every 30 seconds while the page is open. Each completed check is saved to SQLite, then the selected target's latest measurements are redrawn in the two history charts.
+
+## Performance history charts
+
+The **Performance history** section lets you select any configured target and review up to the latest 60 stored checks.
+
+The latency chart shows:
+
+- latest latency
+- average latency across the displayed history
+- peak latency
+- response-time trend over time
+
+The packet-loss chart shows:
+
+- latest packet loss
+- average packet loss
+- peak packet loss
+- reliability trend on a fixed 0–100% scale
+
+The charts are drawn with browser-native SVG and JavaScript, so no external charting library is required.
 
 ## Example use
 
@@ -48,6 +70,12 @@ SQLite Database
        |
        +--> targets
        +--> measurement history
+       |
+       v
+History API
+       |
+       v
+SVG time-series charts
 ```
 
 ## Run it on Windows / macOS / Linux
@@ -95,15 +123,15 @@ pytest -q
 
 ```text
 network-monitor-dashboard/
-├── app.py              # Flask routes and API
+├── app.py              # Flask routes, live-status API and history API
 ├── monitor.py          # ping, DNS and TCP checks
 ├── db.py               # SQLite operations
 ├── schema.sql          # database schema
 ├── templates/
-│   └── index.html      # dashboard page
+│   └── index.html      # dashboard page and chart containers
 ├── static/
-│   ├── app.js          # live refresh logic
-│   └── style.css       # responsive UI
+│   ├── app.js          # live refresh + SVG chart rendering
+│   └── style.css       # responsive UI and chart styling
 ├── tests/
 │   └── test_app.py
 ├── requirements.txt
@@ -117,15 +145,18 @@ network-monitor-dashboard/
 - TCP connectivity checks
 - DNS troubleshooting
 - Flask backend and JSON API development
-- SQLite data storage
-- Basic frontend JavaScript for live dashboard updates
+- SQLite data storage and time-series history retrieval
+- Frontend JavaScript for live dashboard updates
+- SVG time-series data visualisation without an external chart dependency
 - Turning raw network measurements into an interface useful for troubleshooting
 
 ## Good next upgrades
 
-- Latency and packet-loss charts
-- Email/Slack alerts after repeated failures
+- Alert rules after repeated failures or high packet loss
+- Email/Slack notifications
 - SNMP monitoring for switches and routers
+- Cisco device metrics and interface status
+- Windows Server monitoring
 - Export measurements to CSV
 - Authentication for business use
 - Docker deployment
