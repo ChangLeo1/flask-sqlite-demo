@@ -3,6 +3,7 @@ from __future__ import annotations
 import ipaddress
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
 from typing import Optional
 
 from flask import Flask, jsonify, redirect, render_template, request, url_for
@@ -94,7 +95,7 @@ def api_status():
                     "packet_loss": None,
                     "dns_ip": None,
                     "port_open": None,
-                    "checked_at": None,
+                    "checked_at": datetime.now(timezone.utc).isoformat(),
                     "error": f"Unexpected check error: {exc}",
                 }
 
@@ -113,7 +114,9 @@ def api_status():
 
 @app.get("/api/history/<int:target_id>")
 def api_history(target_id: int):
-    return jsonify({"history": db.history(target_id, limit=30)})
+    requested_limit = request.args.get("limit", default=60, type=int)
+    limit = min(max(requested_limit or 60, 10), 200)
+    return jsonify({"target_id": target_id, "history": db.history(target_id, limit=limit)})
 
 
 if __name__ == "__main__":
