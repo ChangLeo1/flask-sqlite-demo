@@ -113,7 +113,9 @@ def api_status():
 
 @app.get("/api/history/<int:target_id>")
 def api_history(target_id: int):
-    return jsonify({"history": db.history(target_id, limit=30)})
+    requested_limit = request.args.get("limit", default=60, type=int)
+    limit = min(max(requested_limit or 60, 10), 200)
+    return jsonify({"target_id": target_id, "history": db.history(target_id, limit=limit)})
 
 
 if __name__ == "__main__":
